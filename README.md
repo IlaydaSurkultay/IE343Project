@@ -12,15 +12,31 @@
 - When we select the highest temperature of 1000, the difference becomes 9999.9999999990234375. When we run it like this 5 times, the best value average is 1288.8 and the average execution time is 39.4 millisecond. When we increase the highest temperature and set it 2000, the difference becomes 1999.999999998819. When we run it like this 5 times, the best value average is 1324.8 and the execution time average is 35.6 millisecond. 
 - These results show that when the difference between the initial and final temperature increases, the best value increases and the execution time decreases.
 
--When the Max Temperature is 1000, the best values and execution times were: (1275,28); (1296,64); (1291,57); (1297,28); (1312,20)
--When the Max Temperature is 2000, the best values and execution times were: (1314,19); (1320,47); (1308,59); (1380,35); (1324,8)
+- When the Max Temperature is 1000, the best values and execution times were: (1275,28); (1296,64); (1291,57); (1297,28); (1312,20)
+- When the Max Temperature is 2000, the best values and execution times were: (1314,19); (1320,47); (1308,59); (1380,35); (1324,8)
 
 ## The explanation about the code:
 
+- The initial solution and other relevant variables are initialized.
+- A random number generator is created to generate random numbers.
+- The simulated annealing process is initiated.
+- The loop runs as many as the specified number of iterations.
+- In each iteration, an item is removed from the bag (outOfBag) and an item from outside the bag is added to it (inToBag).
+- The value and weight of the solution are calculated.
+- If the solution does not exceed the capacity of the bag, the solution is accepted and its new value is calculated.
+- If the new solution has a better value than the current solution, it is accepted. 
+- Otherwise, an acceptance probability is calculated and compared with a random number to decide acceptance or rejection.
+- The best value is updated in each iteration.
+- When the capacity is exceeded, the previous iteration is reverted to.
+- In the last iteration, the best solution and value are determined.
 
+### Methods :
 
+- calculateValue: Calculates the value of a solution.
+- calculateWeight: Calculates the weight of a solution.
+- findCurrentAndNextTemp: Using the formula finds the current and next temperature values.
 
-*******************************************************************************************************************************************
+***********************************************************************************************************************************
 
 For this semester, students are expected to implement the given metaheuristic (simulated annealing) for the Knapsack Problem within the scope of IE343 lecture. Problem definition is as follows:
 	Simulated annealing is a probabilistic algorithm used to find a good solution to an optimization problem. It is based on the physical process of annealing in metallurgy, where a metal is heated and then slowly cooled to reduce its defects and increase its strength. Similarly, simulated annealing starts with a high-energy state and then gradually cools down, allowing the algorithm to explore a wide range of potential solutions.
