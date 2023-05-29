@@ -1,5 +1,27 @@
 # Spring-23-Term-Project
 
+## Question 1: How does the execution time change when cooling rate increased? Report it by running the same algorithm for the given dataset
+- We ran the algorithm 10 times with a cooling rate of 0.03.the average execution time was 34.9 milliseconds.cooling rate increased and when we did 0.7, after running it 10 times, the average execution time was 34.3 milliseconds. 
+- This shows us that as the cooling rate increases, the execution time decreases
+
+- When the Cooling Rate is 0.03, the execution times were: 41, 42, 15, 44, 75, 15, 25, 27, 29, 36
+- When the Cooling Rate is 0.7, the execution times were: 88, 36, 53, 44, 23, 19, 27, 21, 20, 18
+
+## Question 2: How does the execution time and solution quality change when the difference between starting temperature and stopping temperature is increased? Report it by running the same algorithm for the given datasets.
+
+- When we select the highest temperature of 1000, the difference becomes 9999.9999999990234375. When we run it like this 5 times, the best value average is 1288.8 and the average execution time is 39.4 millisecond. When we increase the highest temperature and set it 2000, the difference becomes 1999.999999998819. When we run it like this 5 times, the best value average is 1324.8 and the execution time average is 35.6 millisecond. 
+- These results show that when the difference between the initial and final temperature increases, the best value increases and the execution time decreases.
+
+-When the Max Temperature is 1000, the best values and execution times were: (1275,28); (1296,64); (1291,57); (1297,28); (1312,20)
+-When the Max Temperature is 2000, the best values and execution times were: (1314,19); (1320,47); (1308,59); (1380,35); (1324,8)
+
+## The explanation about the code:
+
+
+
+
+*******************************************************************************************************************************************
+
 For this semester, students are expected to implement the given metaheuristic (simulated annealing) for the Knapsack Problem within the scope of IE343 lecture. Problem definition is as follows:
 	Simulated annealing is a probabilistic algorithm used to find a good solution to an optimization problem. It is based on the physical process of annealing in metallurgy, where a metal is heated and then slowly cooled to reduce its defects and increase its strength. Similarly, simulated annealing starts with a high-energy state and then gradually cools down, allowing the algorithm to explore a wide range of potential solutions.
 The basic idea is to start with an initial solution and then iteratively improve it by making small changes and accepting the changes if they improve the solution, even if they make it worse in the short term. The acceptance of a worse solution is controlled by a parameter called the temperature, which is gradually reduced over time. Initially, the temperature is high, and the algorithm is free to explore a large space of potential solutions, including those that are worse than the current solution. As the temperature decreases, the algorithm becomes more focused on improving the current solution and less likely to accept worse solutions. 
