@@ -4,7 +4,7 @@ import java.util.Random;
 public class Main {
 
 	// Define the maximum temperature and cooling rate for the annealing process
-	private static final double MAX_TEMPERATURE = 10000;
+	private static final double MAX_TEMPERATURE = 1000;
 	private static final double COOLING_RATE = 0.03;
 	private static int[] values = {68, 64, 47, 55, 72, 53, 81, 60, 72, 80, 62, 42, 48, 47, 68, 51, 48, 68, 83, 55, 48, 44, 49, 68, 63, 71, 82, 55, 60, 63, 56, 75, 42, 76, 42, 60, 75, 68, 67, 42, 71, 58, 66, 72, 67, 78, 49, 50, 51};
 	private static int[] weights = {21, 11, 11, 10, 14, 12, 12, 14, 17, 13, 11, 13, 17, 14, 16, 10, 18, 10, 16, 17, 19, 12, 12, 16, 16, 13, 17, 12, 16, 13, 21, 11, 11, 10, 14, 12, 12, 14, 17, 13, 11, 13, 17, 14, 16, 10, 18, 10, 16};
@@ -14,16 +14,18 @@ public class Main {
 	// Define the solution state variables
 	private static boolean[] currentSolution;
 	private static boolean[] bestSolution;
-	private static int currentValue;
+	private static int currentValue; //currentOFV
 	private static int bestValue;
-	
 
 	private static double[] currentTemp;
 	private static double[] nextTemp;
 
+	private static int iterationSize =10;
 
 	public static void main(String[] args) {
+		
 		long startTime = System.currentTimeMillis();
+		
 		// Initialize the solution state variables
 		currentSolution = new boolean[values.length];
 		bestSolution = new boolean[values.length];
@@ -31,29 +33,20 @@ public class Main {
 		bestValue = 0;
 		boolean[] initialSolution = {false, true, false, true, false, true, true, false, true, true, true, false, false, true, false, false, true, false, false, true, true, true, true, false, true, true, false, true, false, false, false, false, false, true, false, true, false, false, false, true, false, false, true, false, true, false, false, false, false};
 
-		/* int valuee = calculateValue(initialSolution);
-        int weightt = calculateWeight(initialSolution);
-        int truee =calculateTrue(currentSolution);
-        System.out.println(valuee);
-         System.out.println(weightt);
-         System.out.println(truee);
-		 */
-
 		// Initialize the random number generator
 		Random random = new Random();
 
 		// Start the simulated annealing process
 		int iteration = 0;
-		int[] currentOFV = new int[10];
-		boolean[][] solution = new boolean[10][49];
-		int[] solutionOFV = new int[10];
-		String[] betterSolution = new String[10];
-		double[] metroPolisNum = new double[10];
-		double[] randomNum = new double[10];
-		String[] acceptOrReject = new String[10];
-		int[] newOFV = new int[10];
-
-
+		
+		int[] currentOFV = new int[iterationSize];
+		boolean[][] solution = new boolean[iterationSize][49];
+		int[] solutionOFV = new int[iterationSize];
+		String[] isBetterSolution = new String[iterationSize];
+		double[] metroPolisNum = new double[iterationSize];
+		double[] randomNum = new double[iterationSize];
+		String[] acceptOrReject = new String[iterationSize];
+		int[] newOFV = new int[iterationSize];
 
 		int outOfBag;
 		int inToBag;
@@ -66,17 +59,11 @@ public class Main {
 
 		int currentWeight;
 
-		
-		
-		
-		
-		
-		
-
 		currentSolution = initialSolution;
+		
 		findCurrentAndNextTemp();
 		
-		while(iteration<10) {
+		while(iteration<iterationSize) {
 			
 			outOfBag =  random.nextInt(22)+1;
 			inToBag = random.nextInt(28)+1;
@@ -89,24 +76,26 @@ public class Main {
 
 			currentWeight=0;
 
-			currentOFV[iteration] = calculateValue(currentSolution);
+			currentValue = calculateValue(currentSolution);
+			currentOFV[iteration] = currentValue;
 			
-			System.out.print(outOfBag + " " + inToBag + " : ");
+			System.out.print("Out of bag : " + outOfBag + " In to bag : " + inToBag + " : ");
 			for(int i = 0; i< currentSolution.length;i++) {
-
+				
 				if(currentSolution[i]) {
-					
+	
 					countTrue++;
 					currentWeight+=weights[i];
 					
 					if(countTrue==outOfBag) {
 						outOfBagIndex = i;
 						currentWeight -= weights[i];
-
 					}
 				}
 				else {
+					
 					countFalse++;
+					
 					if(countFalse == inToBag) {
 						inToBagIndex = i;
 						currentWeight += weights[i];
@@ -121,27 +110,27 @@ public class Main {
 				
 				solutionOFV[iteration] = calculateValue(currentSolution);
 				
-				System.out.println("valueBefore = " + currentOFV[iteration] + ", valueAfter =  " + solutionOFV[iteration] + ", weight= " + calculateWeight(currentSolution) + " temp = " + nextTemp[iteration]);
-				
+				System.out.println(" currentOFV = " + currentOFV[iteration] + ", solutionOFV =  " + solutionOFV[iteration] + ", weight= " + calculateWeight(currentSolution) + " Next Temp = " + nextTemp[iteration]);
+				System.out.println("iteration "+ (iteration+1) +" : ");
 				for(int i = 0; i< currentSolution.length;i++) {
-					boolean x = false;
+					
 					if(currentSolution[i]) {
-						x=true;
+						solution[iteration][i] = true;
+					}else {
+						solution[iteration][i] = false;
 					}
-					solution[iteration][i] = x;
-					System.out.print( x + " ");
+					System.out.print(solution[iteration][i] + " ");
 				}
-
 				System.out.println();
 
 				if(solutionOFV[iteration] >= currentOFV[iteration]) {
-					betterSolution[iteration] = "YES";
-					metroPolisNum[iteration] = 1.0;
+					isBetterSolution[iteration] = "YES";
+					metroPolisNum[iteration] = calculateAcceptanceProbability(currentOFV[iteration],solutionOFV[iteration],currentTemp[iteration]);
 					acceptOrReject[iteration] = "Accept";
 					newOFV[iteration] = solutionOFV[iteration];
 					
 				}else {
-					betterSolution[iteration] = "NO";
+					isBetterSolution[iteration] = "NO";
 					metroPolisNum[iteration] = calculateAcceptanceProbability(currentOFV[iteration],solutionOFV[iteration],currentTemp[iteration]);
 					randomNum[iteration] = random.nextDouble();
 					
@@ -158,12 +147,9 @@ public class Main {
 					bestValue = newOFV[iteration];
 				}
 			}
-			
-			
-			
-			
+		
 			if( currentWeight>knapsackCapacity && iteration != 0) {
-				System.out.println("out of capacity" + currentWeight);
+			//	System.out.println("out of capacity" + currentWeight);
 				iteration--;
 				
 
@@ -171,22 +157,22 @@ public class Main {
 			iteration++;
 		}
 		
+		iteration--;
+		System.out.println(iteration);
 		
-		
-		// bul bunu
-		for(int i = iteration-1;i>=1;i--) {
-			if(bestValue == newOFV[i] && acceptOrReject[i].equals("Accept")) {
-				for(int j=0;j<solution.length; j++) {
-					bestSolution[i]= solution[i][j];
-					break;
+		while(iteration>=0) {
+			if((newOFV[iteration]==bestValue) && (acceptOrReject[iteration].equals("Accept"))) {
+				for(int j=0;j<bestSolution.length; j++) {
+					bestSolution[j]= solution[iteration][j];
 				}
+				break;
 			}
+			iteration--;
 		}
 
 
 		//finding current and next temperature
 		 findCurrentAndNextTemp();
-
 
 		// Print the best solution found
 		 System.out.println("Best Solution: " + Arrays.toString(bestSolution));
@@ -218,7 +204,7 @@ public class Main {
 	
 	
 	
-	//bundan asagisini ben ekledim
+	
 	private static int calculateWeight(boolean[] solution) {
 		int value = 0;
 		int weight = 0;
@@ -234,16 +220,7 @@ public class Main {
 			return weight;
 		}
 	}
-	private static int calculateTrue(boolean[] solution) {
-		int truee = 0;
-		for (int i = 0; i < solution.length; i++) {
-			if (solution[i]) {
-				truee++;
-			}
-		}
-		return truee;
-	}	
-	//buraya kadar
+	
 	
 	
 	
@@ -258,8 +235,8 @@ public class Main {
 
 	private static void findCurrentAndNextTemp() {
 		//finding current and next temperature
-		currentTemp = new double[10];
-		nextTemp = new double[10];
+		currentTemp = new double[iterationSize];
+		nextTemp = new double[iterationSize];
 
 		currentTemp[0]= MAX_TEMPERATURE;
 		nextTemp[0]= currentTemp[0]*COOLING_RATE;
